@@ -1,0 +1,1 @@
+python -c 'import sys, xml.etree.ElementTree as ET, json; print(json.dumps([{"lat": float(node.attrib["lat"]), "lon": float(node.attrib["lon"])} for node in ET.parse(sys.stdin).findall(".//node")]))' < data.xml > data.json

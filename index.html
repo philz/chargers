@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>Leaflet Map Example</title>
+    <link rel="stylesheet" href="leaflet/leaflet.css" />
+    <style>
+      body {
+        padding: 0;
+        margin: 0;
+      }
+      html,
+      body,
+      #map {
+        height: 100vh;
+        width: 100%;
+      }
+      #welcome {
+        text-align: center;
+      }
+      .charger-icon {
+        background: red;
+        border-radius: 50%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map1" style="height: 80vh; width: 100%"></div>
+    <div id="map2" style="height: 0vh; width: 100%"></div>
+    <div id="welcome" style="height: 20vh; width: 100%">
+      <h1>Supercharger Locations</h1>
+      Map data from OpenStreetMap. Click on a charger to zoom in to look around
+      at amenities.
+    </div>
+
+    <script src="leaflet/leaflet.js"></script>
+    <script>
+      // Default to Sacramento...
+      const initialPos = [38.5816, -121.4944];
+
+      // Initialize the first map
+      const map1 = L.map("map1").setView(initialPos, 9);
+      map1.locate({ setView: false, maxZoom: 10 });
+      map1.on("locationfound", (e) => {
+        L.marker(e.latlng, {
+          icon: L.divIcon({ html: "🚘" }),
+        }).addTo(map1);
+        L.setView(e.latlng, 10);
+      });
+      // Add a tile layer to the first map
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution:
+          'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
+        maxZoom: 18,
+      }).addTo(map1);
+
+      // Initialize the second map
+      const map2 = L.map("map2").setView([38.5816, -121.4944], 9);
+      // Add a tile layer to the second map
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution:
+          'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
+        maxZoom: 18,
+      }).addTo(map2);
+
+      async function fetchData() {
+        try {
+          const response = await fetch("data.json");
+          const data = await response.json();
+          for (const item of data) {
+            const marker = L.marker([item.lat, item.lon], {
+              icon: L.divIcon({
+                html: "&#x26a1;",
+                className: "charger-icon",
+              }),
+            }).addTo(map1);
+            L.marker([item.lat, item.lon]).addTo(map2);
+            marker.on("click", () => {
+              // Change the heights of the maps when a marker is clicked
+              document.getElementById("map1").style.height = "40vh";
+              document.getElementById("map2").style.height = "60vh";
+              map1.invalidateSize();
+              map2.invalidateSize();
+              map2.setView([item.lat, item.lon], 18);
+            });
+          }
+        } catch (error) {
+          console.error("Error:", error);
+        }
+      }
+      fetchData();
+    </script>
+  </body>
+</html>
