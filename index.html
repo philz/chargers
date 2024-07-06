@@ -5,7 +5,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
-    <title>Leaflet Map Example</title>
+    <title>Supercharger Locations</title>
     <link rel="stylesheet" href="leaflet/leaflet.css" />
     <style>
       body {
@@ -70,6 +70,21 @@
           'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
         maxZoom: 18,
       }).addTo(map2);
+
+      // Create some button controllers
+      L.Control.Button = L.Control.extend({
+        onAdd: function (map) {
+          const but = L.DomUtil.create("button");
+          but.textContent = "TODO";
+          return but;
+        },
+      });
+
+      L.control.button = function (opts) {
+        return new L.Control.Button(opts);
+      };
+
+      L.control.button({ position: "topright" }).addTo(map2);
 
       async function fetchData() {
         try {
