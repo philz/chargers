@@ -15,7 +15,7 @@
       html,
       body,
       #map {
-        height: 100vh;
+        height: 100svh;
         width: 100%;
       }
       #welcome {
@@ -40,9 +40,9 @@
     </style>
   </head>
   <body>
-    <div id="map1" style="height: 100vh; width: 100%"></div>
-    <div id="map2" style="height: 0vh; width: 100%"></div>
-    <div id="welcome" style="height: 0vh; width: 100%">
+    <div id="map1" style="height: 100svh; width: 100%"></div>
+    <div id="map2" style="height: 0svh; width: 100%"></div>
+    <div id="welcome" style="height: 0svh; width: 100%">
       <h3>Supercharger Locations</h3>
       <p>
         Map data from OpenStreetMap. Click on a charger to zoom in to look
@@ -118,8 +118,8 @@
           position: "topright",
           text: "X",
           onClick: () => {
-            document.getElementById("map1").style.height = "100vh";
-            document.getElementById("map2").style.height = "0vh";
+            document.getElementById("map1").style.height = "100svh";
+            document.getElementById("map2").style.height = "0svh";
             map1.invalidateSize();
             map2.invalidateSize();
           },
@@ -157,8 +157,8 @@
             L.marker([item.lat, item.lon]).addTo(map2);
             marker.on("click", () => {
               // Change the heights of the maps when a marker is clicked
-              document.getElementById("map1").style.height = "40vh";
-              document.getElementById("map2").style.height = "60vh";
+              document.getElementById("map1").style.height = "40svh";
+              document.getElementById("map2").style.height = "60svh";
               legend.remove();
               map1.invalidateSize();
               map2.invalidateSize();
