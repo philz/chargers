@@ -25,13 +25,25 @@
         background: orangered;
         border-radius: 50%;
       }
+      .description {
+        width: 50%;
+        font-size: 16px;
+        color: #333;
+        padding: 10px 14px;
+        background-color: hsla(0, 0%, 100%, 0.8);
+        box-shadow: 0 0 15px rgb(0 0 0 / 20%);
+        border-radius: 5px;
+        line-height: 130%;
+        border: 1px solid grey;
+        text-align: left;
+      }
     </style>
   </head>
   <body>
-    <div id="map1" style="height: 80vh; width: 100%"></div>
+    <div id="map1" style="height: 100vh; width: 100%"></div>
     <div id="map2" style="height: 0vh; width: 100%"></div>
-    <div id="welcome" style="height: 20vh; width: 100%">
-      <h1>Supercharger Locations</h1>
+    <div id="welcome" style="height: 0vh; width: 100%">
+      <h3>Supercharger Locations</h3>
       <p>
         Map data from OpenStreetMap. Click on a charger to zoom in to look
         around at amenities.
@@ -50,8 +62,11 @@
       const map1 = L.map("map1").setView(initialPos, 9);
       map1.locate({ setView: false, maxZoom: 10 });
       map1.on("locationfound", (e) => {
-        L.marker(e.latlng, {
-          icon: L.divIcon({ html: "🚘" }),
+        L.circleMarker(e.latlng, {
+          radius: 10,
+          color: 'blue',
+          fillColor: 'lightblue',
+          fillOpacity: 1
         }).addTo(map1);
         map1.setView(e.latlng, 10);
       });
@@ -61,6 +76,19 @@
           'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
         maxZoom: 18,
       }).addTo(map1);
+
+      // create legend
+      const legend = L.control({ position: "bottomleft" });
+      legend.onAdd = function () {
+        let div = L.DomUtil.create("div", "description");
+        L.DomEvent.disableClickPropagation(div);
+        const welcomeElement = document.getElementById("welcome");
+        const text = welcomeElement.innerHTML;
+        div.insertAdjacentHTML("beforeend", text);
+        return div;
+      };
+
+      legend.addTo(map1);
 
       // Initialize the second map
       const map2 = L.map("map2").setView([38.5816, -121.4944], 9);
@@ -90,8 +118,10 @@
           position: "topright",
           text: "X",
           onClick: () => {
-            document.getElementById("map1").style.height = "60";
+            document.getElementById("map1").style.height = "100";
             document.getElementById("map2").style.height = "0vh";
+            map1.invalidateSize();
+            map2.invalidateSize();
           },
         })
         .addTo(map2);
@@ -117,8 +147,11 @@
           const data = await response.json();
           for (const item of data) {
             const marker = L.marker([item.lat, item.lon], {
+              // Could also use L.circleMarker
+              // See fun examples at https://tomickigrzegorz.github.io/leaflet-examples/#
               icon: L.divIcon({
                 className: "charger-icon",
+                iconSize: [20, 20],
               }),
             }).addTo(map1);
             L.marker([item.lat, item.lon]).addTo(map2);
