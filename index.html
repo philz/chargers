@@ -71,11 +71,12 @@
         maxZoom: 18,
       }).addTo(map2);
 
-      // Create some button controllers
+      // "Generic" button controller.
       L.Control.Button = L.Control.extend({
         onAdd: function (map) {
           const but = L.DomUtil.create("button");
-          but.textContent = "TODO";
+          but.textContent = this.options.text;
+          but.addEventListener("click", this.options.onClick);
           return but;
         },
       });
@@ -84,7 +85,31 @@
         return new L.Control.Button(opts);
       };
 
-      L.control.button({ position: "topright" }).addTo(map2);
+      L.control
+        .button({
+          position: "topright",
+          text: "X",
+          onClick: () => {
+            document.getElementById("map1").style.height = "60";
+            document.getElementById("map2").style.height = "0vh";
+          },
+        })
+        .addTo(map2);
+
+      let currentMarker = null;
+      L.control
+        .button({
+          position: "topright",
+          text: "Open in Google Maps",
+          onClick: () => {
+            if (currentMarker !== null) {
+              // Construct the Google Maps URL
+              const url = `https://www.google.com/maps?q=${currentMarker.lat},${currentMarker.lon}`;
+              window.open(url, "_blank");
+            }
+          },
+        })
+        .addTo(map2);
 
       async function fetchData() {
         try {
@@ -104,6 +129,7 @@
               map1.invalidateSize();
               map2.invalidateSize();
               map2.setView([item.lat, item.lon], 18);
+              currentMarker = item;
             });
           }
         } catch (error) {
