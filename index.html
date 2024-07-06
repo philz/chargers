@@ -22,7 +22,7 @@
         text-align: center;
       }
       .charger-icon {
-        background: red;
+        background: orangered;
         border-radius: 50%;
       }
     </style>
@@ -32,8 +32,13 @@
     <div id="map2" style="height: 0vh; width: 100%"></div>
     <div id="welcome" style="height: 20vh; width: 100%">
       <h1>Supercharger Locations</h1>
-      Map data from OpenStreetMap. Click on a charger to zoom in to look around
-      at amenities.
+      <p>
+        Map data from OpenStreetMap. Click on a charger to zoom in to look
+        around at amenities.
+      </p>
+      <p>
+        <a href="https://github.com/philz/chargers">Pull Requests</a> welcome!
+      </p>
     </div>
 
     <script src="leaflet/leaflet.js"></script>
@@ -48,7 +53,7 @@
         L.marker(e.latlng, {
           icon: L.divIcon({ html: "🚘" }),
         }).addTo(map1);
-        L.setView(e.latlng, 10);
+        map1.setView(e.latlng, 10);
       });
       // Add a tile layer to the first map
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -73,7 +78,6 @@
           for (const item of data) {
             const marker = L.marker([item.lat, item.lon], {
               icon: L.divIcon({
-                html: "&#x26a1;",
                 className: "charger-icon",
               }),
             }).addTo(map1);
